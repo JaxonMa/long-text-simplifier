@@ -8,6 +8,7 @@ Author: Jaxon Ma
 Date: 2026-07-11
 """
 
+import threading
 import tkinter as tk
 from tkinter import ttk
 
@@ -24,6 +25,7 @@ class MainWindow(tk.Tk):
         self._build_client()
         self._create_widgets()
         self._layout_widgets()
+        self.protocol("WM_DELETE_WINDOW", self.destroy)
 
     def _build_client(self):
         env_settings = get_env_settings()
@@ -135,18 +137,30 @@ class MainWindow(tk.Tk):
             return
 
         self._set_status("Simplifying text...")
-        self.update_idletasks()
+        self.paste_button.configure(state="disabled")
+        self.simplify_button.configure(state="disabled")
+        self.copy_button.configure(state="disabled")
 
+        thread = threading.Thread(target=self._run_simplify, args=(source_text,), daemon=True)
+        thread.start()
+
+    def _run_simplify(self, source_text: str):
         simplified_text = simplify(self.client, self.model, source_text)
+        self.after(0, self._finish_simplify, simplified_text)
+
+    def _finish_simplify(self, simplified_text: str | None):
         if simplified_text is None:
             self._set_status("Failed to simplify text. Check your settings or your network.", is_error=True)
-            return
+        else:
+            self.output_text.configure(state="normal")
+            self.output_text.delete("1.0", "end")
+            self.output_text.insert("1.0", simplified_text)
+            self.output_text.configure(state="disabled")
+            self._set_status("Text simplified successfully.")
 
-        self.output_text.configure(state="normal")
-        self.output_text.delete("1.0", "end")
-        self.output_text.insert("1.0", simplified_text)
-        self.output_text.configure(state="disabled")
-        self._set_status("Text simplified successfully.")
+        self.paste_button.configure(state="normal")
+        self.simplify_button.configure(state="normal")
+        self.copy_button.configure(state="normal")
 
     def _copy_simplified_text(self):
         simplified_text = self.output_text.get("1.0", "end").strip()
