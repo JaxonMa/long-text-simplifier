@@ -27,7 +27,6 @@ def get_prompt() -> str:
             + "Ensure that the simplified version is clear, concise, and easy to understand. " \
             + "Use the language user's input is in, and avoid changing the tone or style of the text. "
 
-print(get_prompt())
 
 def simplify(text: str) -> str | None:
     """
@@ -40,12 +39,14 @@ def simplify(text: str) -> str | None:
         str | None: The simplified text if successful, None otherwise.
     """
     try:
-        response = CLIENT.responses.create(
+        response = CLIENT.chat.completions.create(
             model=MODEL,
-            instructions=get_prompt(),
-            input=text
+            messages=[
+                {"role": "system", "content": get_prompt()},
+                {"role": "user", "content": text}
+            ]
         )
-        return response.output_text
+        return response.choices[0].message.content
     except Exception as e:
         print(f"Error simplifying text: {e}")
         return None
