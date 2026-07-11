@@ -78,9 +78,12 @@ class MainWindow(tk.Tk):
             pady=8,
             font=("TkDefaultFont", 14),
         )
+        self.output_text.tag_configure("instructions", foreground="gray")
+        self.output_text.tag_configure("default", foreground="black")
+
         self.output_scroll = ttk.Scrollbar(self, orient="vertical", command=self.output_text.yview)
         self.output_text.configure(yscrollcommand=self.output_scroll.set)
-        self.output_text.insert("1.0", INSTRUCTIONS)
+        self.output_text.insert("1.0", INSTRUCTIONS, "instructions")
         self.output_text.configure(state="disabled")
 
         self.status_var = tk.StringVar(value=f"Ready (Using {self.model})")
@@ -184,7 +187,7 @@ class MainWindow(tk.Tk):
             self.output_text.configure(state="normal")
             self.output_text.delete("1.0", "end")
             self._set_widget_wrap(self.output_text, simplified_text)
-            self.output_text.insert("1.0", simplified_text)
+            self.output_text.insert("1.0", simplified_text, "default")
             self.output_text.configure(state="disabled")
             self._set_status("Text simplified successfully.")
 
