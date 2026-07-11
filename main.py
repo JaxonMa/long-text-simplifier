@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-window.py
+main.py
 This file contains the main GUI window for the long text simplifier application.
 
 Author: Jaxon Ma
@@ -9,7 +9,7 @@ Date: 2026-07-11
 """
 
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk
 
 from openai import OpenAI
 from simplifier import get_env_settings, simplify
