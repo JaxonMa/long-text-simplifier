@@ -25,6 +25,7 @@ API_KEY=your_api_key_here
 MODEL=gpt-4o-mini
 LOOP=False
 ```
+> Note: LOOP determines whether the commandline.py runs once or continuously.
 
 3. Optionally edit `prompt.md` to change the simplification instruction.
 
