@@ -16,7 +16,8 @@ from openai import OpenAI
 from simplifier import get_env_settings, simplify
 
 INSTRUCTIONS = "Please edit BASE_URL and API_KEY in your .env file first so the simplifier can run successfully.\n\n" + \
-                "Then paste text above or type it directly, and click Simplify."
+                "Then paste text above or type it directly, and click Simplify.\n\n" + \
+                "To change the model, edit MODEL in your .env file, then restart the application."
 
 
 class MainWindow(tk.Tk):
@@ -39,7 +40,7 @@ class MainWindow(tk.Tk):
         self.input_label = ttk.Label(self, text="Original Text:", anchor="w")
         self.input_text = tk.Text(
             self,
-            wrap="char",
+            wrap="word",
             undo=True,
             highlightthickness=0,
             highlightbackground=self.cget("bg"),
@@ -52,6 +53,7 @@ class MainWindow(tk.Tk):
         )
         self.input_scroll = ttk.Scrollbar(self, orient="vertical", command=self.input_text.yview)
         self.input_text.configure(yscrollcommand=self.input_scroll.set)
+        self.input_text.bind("<<Modified>>", self._on_input_modified)
 
         self.button_frame = ttk.Frame(self)
         self.paste_button = ttk.Button(self.button_frame, text="Paste", command=self._paste_text)
@@ -65,7 +67,7 @@ class MainWindow(tk.Tk):
         self.output_label = ttk.Label(self, text="Simplified Text:", anchor="w")
         self.output_text = tk.Text(
             self,
-            wrap="char",
+            wrap="word",
             undo=True,
             highlightthickness=0,
             highlightbackground=self.cget("bg"),
@@ -81,7 +83,7 @@ class MainWindow(tk.Tk):
         self.output_text.insert("1.0", INSTRUCTIONS)
         self.output_text.configure(state="disabled")
 
-        self.status_var = tk.StringVar(value="Ready")
+        self.status_var = tk.StringVar(value=f"Ready (Using {self.model})")
         self.status_label = ttk.Label(self, textvariable=self.status_var, anchor="w")
 
     def _layout_widgets(self):
@@ -117,6 +119,31 @@ class MainWindow(tk.Tk):
             self.status_label.configure(foreground="blue")
         else:
             self.status_label.configure(foreground="black")
+
+    def _on_input_modified(self, event: tk.Event):
+        if self.input_text.edit_modified():
+            text = self.input_text.get("1.0", "end")
+            wrap_mode = self._get_wrap_mode(text)
+            self.input_text.configure(wrap=wrap_mode)
+            self.input_text.edit_modified(False)
+
+    def _get_wrap_mode(self, text: str) -> str:
+        # This function checks if the text contains any CJK characters.
+        for character in text:
+            code_point = ord(character)
+            if (
+                0x4E00 <= code_point <= 0x9FFF or
+                0x3400 <= code_point <= 0x4DBF or
+                0x20000 <= code_point <= 0x2A6DF or
+                0x3040 <= code_point <= 0x309F or
+                0x30A0 <= code_point <= 0x30FF or
+                0xAC00 <= code_point <= 0xD7AF
+            ):
+                return "char"
+        return "word"
+
+    def _set_widget_wrap(self, widget: tk.Text, text: str):
+        widget.configure(wrap=self._get_wrap_mode(text))
 
     def _paste_text(self):
         try:
@@ -156,6 +183,7 @@ class MainWindow(tk.Tk):
         else:
             self.output_text.configure(state="normal")
             self.output_text.delete("1.0", "end")
+            self._set_widget_wrap(self.output_text, simplified_text)
             self.output_text.insert("1.0", simplified_text)
             self.output_text.configure(state="disabled")
             self._set_status("Text simplified successfully.")
