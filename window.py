@@ -39,7 +39,7 @@ class MainWindow(tk.Tk):
         self.input_label = ttk.Label(self, text="Original Text:", anchor="w")
         self.input_text = tk.Text(
             self,
-            wrap="word",
+            wrap="char",
             undo=True,
             highlightthickness=0,
             highlightbackground=self.cget("bg"),
@@ -65,7 +65,7 @@ class MainWindow(tk.Tk):
         self.output_label = ttk.Label(self, text="Simplified Text:", anchor="w")
         self.output_text = tk.Text(
             self,
-            wrap="word",
+            wrap="char",
             undo=True,
             highlightthickness=0,
             highlightbackground=self.cget("bg"),
