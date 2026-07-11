@@ -15,6 +15,9 @@ from tkinter import ttk
 from openai import OpenAI
 from simplifier import get_env_settings, simplify
 
+INSTRUCTIONS = "Please edit BASE_URL and API_KEY in your .env file first so the simplifier can run successfully.\n\n" + \
+                "Then paste text above or type it directly, and click Simplify."
+
 
 class MainWindow(tk.Tk):
     def __init__(self):
@@ -75,10 +78,7 @@ class MainWindow(tk.Tk):
         )
         self.output_scroll = ttk.Scrollbar(self, orient="vertical", command=self.output_text.yview)
         self.output_text.configure(yscrollcommand=self.output_scroll.set)
-        self.output_text.insert(
-            "1.0",
-            "Please edit BASE_URL and API_KEY in your .env file first so the simplifier can run successfully.\n\nThen paste text above or type it directly, and click Simplify."
-        )
+        self.output_text.insert("1.0", INSTRUCTIONS)
         self.output_text.configure(state="disabled")
 
         self.status_var = tk.StringVar(value="Ready")
@@ -109,10 +109,12 @@ class MainWindow(tk.Tk):
 
         self.status_label.grid(row=5, column=0, columnspan=2, sticky="ew", padx=12, pady=(0, 12))
 
-    def _set_status(self, message: str, is_error: bool = False):
+    def _set_status(self, message: str, is_error: bool = False, is_info: bool = False):
         self.status_var.set(message)
         if is_error:
             self.status_label.configure(foreground="red")
+        elif is_info:
+            self.status_label.configure(foreground="blue")
         else:
             self.status_label.configure(foreground="black")
 
@@ -136,7 +138,7 @@ class MainWindow(tk.Tk):
             self._set_status("Please enter or paste text to simplify.", is_error=True)
             return
 
-        self._set_status("Simplifying text...")
+        self._set_status("Simplifying text...", is_info=True)
         self.paste_button.configure(state="disabled")
         self.simplify_button.configure(state="disabled")
         self.copy_button.configure(state="disabled")
@@ -164,13 +166,13 @@ class MainWindow(tk.Tk):
 
     def _copy_simplified_text(self):
         simplified_text = self.output_text.get("1.0", "end").strip()
-        if not simplified_text:
+        if not simplified_text or simplified_text == INSTRUCTIONS:
             self._set_status("No simplified text to copy.", is_error=True)
             return
 
         self.clipboard_clear()
         self.clipboard_append(simplified_text)
-        self._set_status("Copied simplified text to clipboard.")
+        self._set_status("Copied simplified text to clipboard.", is_info=True)
 
 
 if __name__ == "__main__":
