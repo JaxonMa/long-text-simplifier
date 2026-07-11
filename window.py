@@ -79,7 +79,6 @@ class MainWindow(tk.Tk):
             font=("TkDefaultFont", 14),
         )
         self.output_text.tag_configure("instructions", foreground="gray")
-        self.output_text.tag_configure("default", foreground="black")
 
         self.output_scroll = ttk.Scrollbar(self, orient="vertical", command=self.output_text.yview)
         self.output_text.configure(yscrollcommand=self.output_scroll.set)
@@ -117,11 +116,11 @@ class MainWindow(tk.Tk):
     def _set_status(self, message: str, is_error: bool = False, is_info: bool = False):
         self.status_var.set(message)
         if is_error:
-            self.status_label.configure(foreground="red")
+            self.status_label.configure(foreground="indianred")
         elif is_info:
-            self.status_label.configure(foreground="blue")
+            self.status_label.configure(foreground="steelblue")
         else:
-            self.status_label.configure(foreground="black")
+            self.status_label.configure(foreground="")
 
     def _on_input_modified(self, event: tk.Event):
         if self.input_text.edit_modified():
@@ -187,7 +186,7 @@ class MainWindow(tk.Tk):
             self.output_text.configure(state="normal")
             self.output_text.delete("1.0", "end")
             self._set_widget_wrap(self.output_text, simplified_text)
-            self.output_text.insert("1.0", simplified_text, "default")
+            self.output_text.insert("1.0", simplified_text)
             self.output_text.configure(state="disabled")
             self._set_status("Text simplified successfully.")
 
