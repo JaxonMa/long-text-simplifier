@@ -2,6 +2,8 @@
 #include <pybind11/pybind11.h>
 
 int main() {
+    std::cout << "Enter text to simplify: ";
+
     std::string user_input;
     std::cin >> user_input;
 
