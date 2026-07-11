@@ -29,7 +29,7 @@ LOOP=False
 
 3. Optionally edit `prompt.md` to change the simplification instruction.
 
-## Run the GUI
+## Run the GUI (Recommended)
 
 ```bash
 python window.py
@@ -50,6 +50,8 @@ python commandline.py
 ```
 
 Enter text at the prompt, and the app will print a simplified version.
+
+**Note**: The CLI has some issues unsolved. It may crash when processing long text. To have a better experience, please use the GUI version.
 
 ## Project files
 
