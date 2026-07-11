@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-main.py
+window.py
 This file contains the main GUI window for the long text simplifier application.
 
 Author: Jaxon Ma

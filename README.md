@@ -32,7 +32,7 @@ LOOP=False
 ## Run the GUI
 
 ```bash
-python main.py
+python window.py
 ```
 
 The GUI includes:
@@ -54,7 +54,7 @@ Enter text at the prompt, and the app will print a simplified version.
 ## Project files
 
 - `commandline.py` — command-line entry point
-- `main.py` — Tkinter GUI window implementation
+- `window.py` — Tkinter GUI window implementation
 - `simplifier.py` — API client and simplification logic
 - `prompt.md` — prompt template used during simplification
 - `sample.txt` — example text for testing
