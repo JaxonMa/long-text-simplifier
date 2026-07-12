@@ -169,7 +169,7 @@ class MainWindow(tk.Tk):
 
         self._set_status("Simplifying text...", is_info=True)
         self.paste_button.configure(state="disabled")
-        self.simplify_button.configure(state="disabled")
+        self.simplify_button.configure(text="Simplifying...", state="disabled")
         self.copy_button.configure(state="disabled")
 
         thread = threading.Thread(target=self._run_simplify, args=(source_text,), daemon=True)
@@ -191,7 +191,7 @@ class MainWindow(tk.Tk):
             self._set_status("Text simplified successfully.")
 
         self.paste_button.configure(state="normal")
-        self.simplify_button.configure(state="normal")
+        self.simplify_button.configure(text="Simplify", state="normal")
         self.copy_button.configure(state="normal")
 
     def _copy_simplified_text(self):
