@@ -116,7 +116,7 @@ class MainWindow(tk.Tk):
     def _set_status(self, message: str, is_error: bool = False, is_info: bool = False):
         self.status_var.set(message)
         if is_error:
-            self.status_label.configure(foreground="indianred")
+            self.status_label.configure(foreground="tomato")
         elif is_info:
             self.status_label.configure(foreground="steelblue")
         else:
